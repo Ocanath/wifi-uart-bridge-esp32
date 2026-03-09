@@ -5,7 +5,7 @@
 #include <ESP32Servo.h>
 #include "control_interface.h"
 #include "dartt.h"
-
+#include "cobs.h"
 
 /*
 Tested with 3.0.3 esp32 arduino board package by Espressif Systems.
@@ -19,6 +19,7 @@ static buffer_t gl_uart_buffer = {
     .len  = 0
 };
 static uint8_t udp_pkt_buf[UDP_PKT_BUF_SIZE] = {0};
+static uint8_t udp_decode_buf[UDP_PKT_BUF_SIZE] = {0};
 
 
 // ---------------------------------------------------------------------------
@@ -34,46 +35,69 @@ static void dartt_udp_wrapper(dartt_turret_control_t * ctl, uint32_t ts)
 	{
 		return;
 	}
-	dartt_buffer_t raw = 
-	{
+	cobs_buf_t cb_encoded = {
 		.buf = udp_pkt_buf,
 		.size = sizeof(udp_pkt_buf),
+		.length = 0,
+		.encoded_state = COBS_ENCODED
+	};
+	cobs_buf_t cb_decoded = {
+		.buf = udp_decode_buf,
+		.size = sizeof(udp_decode_buf),
+		.length = 0,
+		.encoded_state = COBS_ENCODED
+	};
+	int cbsrc = cobs_decode_double_buffer(&cb_encoded, &cb_decoded);
+	if(cbsrc != COBS_SUCCESS)
+	{
+		return;
+	}
+
+	dartt_buffer_t raw = 
+	{
+		.buf = udp_decode_buf,
+		.size = sizeof(udp_decode_buf),
 		.len = 0
 	};
     raw.len = udp.read(raw.buf, raw.size-1);
 	if(raw.len != 0)
 	{
 		payload_layer_msg_t pld_msg = {};
-		int rc = dartt_frame_to_payload(&raw, TYPE_ADDR_CRC_MESSAGE, PAYLOAD_ALIAS, &pld_msg);
+		int rc = dartt_frame_to_payload(&raw, TYPE_SERIAL_MESSAGE, PAYLOAD_ALIAS, &pld_msg);
 		if(rc == DARTT_PROTOCOL_SUCCESS)
 		{
 			dartt_mem_t ctl_ref = {
 				.buf = (unsigned char * )ctl,
 				.size = sizeof(dartt_turret_control_t)
 			};
-			rc = dartt_parse_general_message(&pld_msg, TYPE_ADDR_CRC_MESSAGE, &ctl_ref, &raw);		//routes reply to 'raw', which is the same as the input buffer - should still be okay though!
+			rc = dartt_parse_general_message(&pld_msg, TYPE_SERIAL_MESSAGE, &ctl_ref, &raw);		//routes reply to 'raw', which is the same as the input buffer - should still be okay though!
 		}
 		if(rc == DARTT_PROTOCOL_SUCCESS)
 		{
-			if (gl_prefs.en_fixed_target == 0 && udp.remoteIP() != IPAddress(0, 0, 0, 0))
+			cb_decoded.length = raw.len;	//these point to the same buffer, but we need to ensure the length is updated after parse_general
+			cbsrc = cobs_encode_single_buffer(&cb_decoded);	//weird - this and raw refer to the same memory, so this should work fine
+			if(cbsrc == COBS_SUCCESS)
 			{
-				udp.beginPacket(udp.remoteIP(), udp.remotePort() + gl_prefs.reply_offset);
-			}   
-			else if (gl_prefs.en_fixed_target == 0 && udp.remoteIP() == IPAddress(0, 0, 0, 0))
-			{
-				udp.beginPacket(IPAddress(255, 255, 255, 255), gl_prefs.port + gl_prefs.reply_offset);
-			}   
-			else
-			{
-				IPAddress remote_ip(gl_prefs.remote_target_ip);
-				udp.beginPacket(remote_ip, gl_prefs.port + gl_prefs.reply_offset);
-			}
-			udp.write(raw.buf, raw.len);
-			udp.endPacket();
+				if (gl_prefs.en_fixed_target == 0 && udp.remoteIP() != IPAddress(0, 0, 0, 0))
+				{
+					udp.beginPacket(udp.remoteIP(), udp.remotePort() + gl_prefs.reply_offset);
+				}   
+				else if (gl_prefs.en_fixed_target == 0 && udp.remoteIP() == IPAddress(0, 0, 0, 0))
+				{
+					udp.beginPacket(IPAddress(255, 255, 255, 255), gl_prefs.port + gl_prefs.reply_offset);
+				}   
+				else
+				{
+					IPAddress remote_ip(gl_prefs.remote_target_ip);
+					udp.beginPacket(remote_ip, gl_prefs.port + gl_prefs.reply_offset);
+				}
+				udp.write(raw.buf, raw.len);
+				udp.endPacket();
 
-			led_state = 1;
-			digitalWrite(gl_prefs.led_pin, led_state);
-			led_ts = ts;
+				led_state = 1;
+				digitalWrite(gl_prefs.led_pin, led_state);
+				led_ts = ts;
+			}
 		}
 	}
 }
