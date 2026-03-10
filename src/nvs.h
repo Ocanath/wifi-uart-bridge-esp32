@@ -29,6 +29,7 @@ typedef struct nvs_settings_t
 
   uint8_t led_pin;
   uint8_t serial_frame_encoding_mode;	//
+  uint8_t spam_target;	//
 }nvs_settings_t;
 
 extern Preferences preferences;

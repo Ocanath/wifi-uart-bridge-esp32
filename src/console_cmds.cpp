@@ -348,6 +348,50 @@ void handle_console_cmds(void)
 		}
     }
 
+
+
+	//////////////////////////////////////////////////////////////////////
+    cmp = cmd_match((const char *)gl_console_cmd.buf, "setspam ");
+    if (cmp > 0)
+    {
+        match = 1;
+        const char *arg = (const char *)(&gl_console_cmd.buf[cmp]);
+        char *tmp;
+        int mode = strtol(arg, &tmp, 10);
+		if(mode >= 0 && mode <= 1)
+        {
+			if(mode == 0)
+			{
+				Serial.printf("Disabling spam\n");
+			}
+			else
+			{
+				Serial.printf("Spam mode ON\n");
+			}
+        	gl_prefs.spam_target = mode;
+		}
+		else
+		{
+			Serial.printf("Invalid spam setting\n");
+		}
+        save = 1;
+    }
+
+	//////////////////////////////////////////////////////////////////////
+    cmp = cmd_match((const char *)gl_console_cmd.buf, "readspam");
+    if (cmp > 0)
+    {
+        match = 1;
+		if(gl_prefs.spam_target == 0)
+		{
+			Serial.printf("Spam disabled\n");
+		}
+		else
+		{
+			Serial.printf("Spam enabled\n");
+		}
+    }
+
     //////////////////////////////////////////////////////////////////////
     cmp = cmd_match((const char *)gl_console_cmd.buf, "readcred");
     if (cmp > 0)
