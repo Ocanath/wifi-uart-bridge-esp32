@@ -306,6 +306,49 @@ void handle_console_cmds(void)
     }
 
     //////////////////////////////////////////////////////////////////////
+    cmp = cmd_match((const char *)gl_console_cmd.buf, "setencoding ");
+    if (cmp > 0)
+    {
+        match = 1;
+        const char *arg = (const char *)(&gl_console_cmd.buf[cmp]);
+        char *tmp;
+        int mode = strtol(arg, &tmp, 10);
+		if(mode >= 0 && mode <= 1)
+        {
+			// Serial.printf("Setting serial mode to: %d\r\n", mode);
+			if(mode == COBS_FRAMING)
+			{
+				Serial.printf("Setting mode to COBS\n");
+			}
+			else
+			{
+				Serial.printf("Setting mode to PPP\n");
+			}
+        	gl_prefs.serial_frame_encoding_mode = mode;
+		}
+		else
+		{
+			Serial.printf("Invalid serial encoding mode selection\n");
+		}
+        save = 1;
+    }
+
+	//////////////////////////////////////////////////////////////////////
+    cmp = cmd_match((const char *)gl_console_cmd.buf, "readencoding");
+    if (cmp > 0)
+    {
+        match = 1;
+		if(gl_prefs.serial_frame_encoding_mode == COBS_FRAMING)
+		{
+			Serial.printf("Using mode: COBS\n");
+		}
+		else
+		{
+			Serial.printf("Using mode: PPP\n");
+		}
+    }
+
+    //////////////////////////////////////////////////////////////////////
     cmp = cmd_match((const char *)gl_console_cmd.buf, "readcred");
     if (cmp > 0)
     {

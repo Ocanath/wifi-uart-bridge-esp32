@@ -30,7 +30,7 @@ enum { PERIOD_CONNECTED = 50, PERIOD_DISCONNECTED = 1000 };
 #define AUDIO_UDP_PORT          6767
 
 // Forwarding buffer sizes
-#define PAYLOAD_BUFFER_SIZE  64
+#define PAYLOAD_BUFFER_SIZE  128
 #define UDP_PKT_BUF_SIZE     256
 
 // Buffer type for null-terminated UART framing

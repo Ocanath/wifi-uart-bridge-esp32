@@ -5,6 +5,9 @@
 #define WIFI_MAX_SSID_LEN   32    //SSID max length is 32 characters
 #define WIFI_MAX_PWD_LEN    63    //WPA2-PSK key length limit is 63 characters
 #define DEVICE_NAME_LEN     32
+
+enum {COBS_FRAMING = 0, PPP_FRAMING = 1};
+
 //add device name property and UDP scannable method to retrieve it, for IP-name mapping
 typedef struct nvs_settings_t
 {
@@ -25,7 +28,7 @@ typedef struct nvs_settings_t
   IPAddress dns;
 
   uint8_t led_pin;
-
+  uint8_t serial_frame_encoding_mode;	//
 }nvs_settings_t;
 
 extern Preferences preferences;
