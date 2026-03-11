@@ -24,7 +24,7 @@ static void handle_spam(uint32_t ts)
 {
 	if(gl_prefs.spam_target)
 	{
-		if(ts - spamts > 20)
+		if(ts - spamts > 5)
 		{
 			spamts = ts;
 			udp.beginPacket(udp.remoteIP(), udp.remotePort()+gl_prefs.reply_offset);

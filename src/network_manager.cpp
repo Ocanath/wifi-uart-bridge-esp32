@@ -104,7 +104,7 @@ void network_manager_setup(nvs_settings_t *p)
     WiFi.begin((const char *)p->ssid, (const char *)p->password);
     uint32_t timeout = millis() + 3000;
     while (millis() < timeout && WiFi.status() != WL_CONNECTED);
-    int connected = WiFi.waitForConnectResult();
+    int connected = WiFi.waitForConnectResult(5000);
     if (connected != WL_CONNECTED)
         Serial.printf("Connection to network %s failed for an unknown reason\r\n", (const char *)p->ssid);
     else
