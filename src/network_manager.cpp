@@ -11,7 +11,7 @@ WiFiServer tcp_server(0);   // port set at runtime via network_begin_udp_tcp()
 WiFiClient tcp_client;
 
 // LED globals
-uint8_t  led_state = 1;
+uint8_t  led_state = LED_ON;
 uint32_t led_ts    = 0;
 uint32_t blink_per = PERIOD_DISCONNECTED;
 
@@ -88,7 +88,7 @@ void network_manager_setup(nvs_settings_t *p)
         snprintf(p->ssid, sizeof(p->ssid), "no ssid set!");
 
     pinMode(p->led_pin, OUTPUT);
-    digitalWrite(p->led_pin, 1);
+    digitalWrite(p->led_pin, LED_ON);
 
     manage_static_ip(p);
 
@@ -141,7 +141,7 @@ void handle_led_timeout(nvs_settings_t *p, uint32_t ts)
 {
     if (ts - led_ts > 1)
     {
-        led_state = 0;
+        led_state = LED_OFF;
         digitalWrite(p->led_pin, led_state);
     }
 }

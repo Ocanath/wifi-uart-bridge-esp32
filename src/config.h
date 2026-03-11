@@ -7,6 +7,10 @@
 #define LED_PIN    21
 #define BOOT_PIN   9
 
+//LED state
+#define LED_ON	0
+#define LED_OFF	1
+
 // UART2
 #define UART2_RX_PIN     4
 #define UART2_TX_PIN     5
