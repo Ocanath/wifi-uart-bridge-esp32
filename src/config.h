@@ -12,8 +12,8 @@
 #define LED_OFF	1
 
 // UART2
-#define UART2_RX_PIN     4
-#define UART2_TX_PIN     5
+#define UART2_RX_PIN     4	//D3
+#define UART2_TX_PIN     5	//D4
 #define DEFAULT_BAUDRATE 2000000
 
 // Network

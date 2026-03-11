@@ -45,3 +45,10 @@ setencoding 1
 
 
 This configures the hand to recognize PPP frame characters for forwarding uart frames, sets the uart baudrate to the hand default, and gives you led activity that maps to network traffic activity.
+
+### Laptop Configuration
+
+
+To get the laptop talking to the udp/uart forwarding server without a shared witi AP, use this excellent [hotspot tool for linux](https://github.com/lakinduakash/linux-wifi-hotspot) that configures everything for you. Windows has builtin utilities for this.
+
+You can run the 
