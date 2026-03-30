@@ -3,7 +3,13 @@
 static uint8_t cmd_buf[BUFFER_SIZE] = {0};  //local buffer we fill with characters
 static int charbuf_loc = 0;
 
-console_cmd_t gl_console_cmd = {0};
+static uint8_t gl_console_cmd_buf[BUFFER_SIZE] = {};
+console_cmd_t gl_console_cmd = {
+	.buf = gl_console_cmd_buf,
+	.size = sizeof(gl_console_cmd_buf),
+	.len = 0,
+	.parsed = 0
+};
 
 void get_console_lines(void)
 {

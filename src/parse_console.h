@@ -9,10 +9,10 @@
 
 typedef struct console_cmd_t
 {
-  uint8_t buf[BUFFER_SIZE];
-  int len;
-
-  uint8_t parsed; //flag for indicating whether the command has been handled
+	unsigned char * buf;
+	size_t size;
+	size_t len;
+ 	uint8_t parsed; //flag for indicating whether the command has been handled
 }console_cmd_t;
 
 extern console_cmd_t gl_console_cmd;
