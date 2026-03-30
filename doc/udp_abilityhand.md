@@ -66,3 +66,20 @@ We47
 ### Laptop Configuration
 
 You must ensure the laptop and bridge are on the same network, and that there are no firewall rules blocking your selected port.
+
+### Final Notes
+
+The ROS node does IP discovery. If it fails to find a hand you may need to run it again a few times.
+
+
+# IF YOU ARE JUST SWITCHING WIFI NETWORKS:
+```bash
+setssid <new ssid>
+setpwd <new password>
+```
+Verify that it's connected:
+```bash
+restart
+ipconfig
+```
+It should have a new ip
