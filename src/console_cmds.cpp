@@ -139,7 +139,9 @@ void handle_console_cmds(void)
         match = 1;
         const char *arg = (const char *)(&gl_console_cmd.buf[cmp]);
         for (int i = 0; i < DEVICE_NAME_LEN; i++)
+		{
             gl_prefs.name[i] = '\0';
+		}
         for (int i = 0; arg[i] != '\0'; i++)
         {
             if (arg[i] != '\r' && arg[i] != '\n')

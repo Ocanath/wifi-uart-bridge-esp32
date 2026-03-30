@@ -53,7 +53,7 @@ static void handle_udp(uint32_t ts)
 	}
 
 	Serial2.write(udp_pkt_buf, len);
-	led_state = 1;
+	led_state = LED_ON;
 	digitalWrite(gl_prefs.led_pin, led_state);
 	led_ts = ts;
 
@@ -90,7 +90,7 @@ static void handle_tcp(uint32_t ts)
 					tcp_client.write((uint8_t *)gl_prefs.name, strlen(gl_prefs.name));
 				}
 				Serial2.write(udp_pkt_buf, n);
-				led_state = 1;
+				led_state = LED_ON;
 				digitalWrite(gl_prefs.led_pin, led_state);
 				led_ts = ts;
 			}
@@ -108,7 +108,7 @@ void send_buffer_tcp(buffer_t * msg, uint32_t ts)
 {
 	// TCP mode: null-terminated framing
 	tcp_client.write(msg->buf, msg->len);
-	led_state = 1;
+	led_state = LED_ON;
 	digitalWrite(gl_prefs.led_pin, led_state);
 	led_ts = ts;
 }
@@ -133,7 +133,7 @@ void send_buffer_udp(buffer_t * msg, uint32_t ts)
 	udp.write(msg->buf, msg->len);
 	udp.endPacket();
 	
-	led_state = 1;
+	led_state = LED_ON;
 	digitalWrite(gl_prefs.led_pin, led_state);
 	led_ts = ts;
 }
